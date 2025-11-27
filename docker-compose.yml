@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  cloudflare-manager:
+    build: .
+    container_name: cloudflare-manager
+    ports:
+      - "7860:7860"
+    environment:
+      # Optional: Pre-fill credentials (can also enter in web UI)
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL:-}
+      - CLOUDFLARE_TOKEN=${CLOUDFLARE_TOKEN:-}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7860/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
