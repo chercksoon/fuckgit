@@ -119,7 +119,36 @@ print("\n完成！网站将在 https://example.com 上线")
 print("（等待 DNS 传播，通常需要 5-30 分钟）")
 ```
 
-## Worker 路由配置（可选）
+## Worker 上传和配置
+
+### 1. 上传 Worker 脚本
+
+```python
+# 上传 Worker 文件
+result = cf.upload_worker(
+    script_name="my-worker",
+    worker_file="./worker.js"
+)
+
+if result:
+    print(f"✓ Worker 已上传: {result['id']}")
+    print(f"  访问地址: https://my-worker.<account>.workers.dev")
+
+# 上传带 KV 绑定的 Worker
+result = cf.upload_worker(
+    script_name="my-worker",
+    worker_file="./worker.js",
+    bindings=[
+        {
+            "type": "kv_namespace",
+            "name": "MY_KV",
+            "namespace_id": "your-kv-namespace-id"
+        }
+    ]
+)
+```
+
+### 2. Worker 路由配置（可选）
 
 ```python
 # 获取 Zone ID
@@ -162,8 +191,10 @@ print("✓ Worker 已配置在 api.example.com")
 ├── GET_STARTED.md          # 快速上手指南
 ├── USAGE_GUIDE.md          # 完整使用指南
 ├── API_REFERENCE.md        # API 参考文档
+├── UPLOAD_FILES_GUIDE.md   # 文件上传详细指南（Pages & Worker）
 ├── PROJECT_SUMMARY.md      # 项目总结
-└── FILES.md                # 文件说明
+├── FILES.md                # 文件说明
+└── example_worker.js       # 示例 Worker 脚本
 ```
 
 ## 核心功能详解

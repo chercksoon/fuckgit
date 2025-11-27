@@ -507,6 +507,119 @@ delete_worker_route(zone_id: str, route_id: str) -> bool
 
 ---
 
+#### upload_worker()
+
+Upload a Worker script to Cloudflare.
+
+```python
+upload_worker(
+    script_name: str, 
+    worker_file: str, 
+    bindings: Optional[List[Dict]] = None
+) -> Optional[Dict]
+```
+
+**Parameters:**
+- `script_name` (str): Name of the worker script
+- `worker_file` (str): Path to the worker .js file
+- `bindings` (Optional[List[Dict]]): List of resource bindings (KV, R2, etc.)
+
+**Returns:** Worker script details dict or None
+
+**Example:**
+
+```python
+# Basic upload
+result = cf.upload_worker(
+    script_name="my-worker",
+    worker_file="./worker.js"
+)
+
+# Upload with KV binding
+result = cf.upload_worker(
+    script_name="my-worker",
+    worker_file="./worker.js",
+    bindings=[
+        {
+            "type": "kv_namespace",
+            "name": "MY_KV",
+            "namespace_id": "your-kv-id"
+        }
+    ]
+)
+
+if result:
+    print(f"Worker uploaded: {result['id']}")
+```
+
+---
+
+#### list_workers()
+
+List all Worker scripts in the account.
+
+```python
+list_workers() -> List[Dict]
+```
+
+**Returns:** List of worker script dicts
+
+**Example:**
+
+```python
+workers = cf.list_workers()
+for worker in workers:
+    print(f"- {worker['id']} (modified: {worker['modified_on']})")
+```
+
+---
+
+#### get_worker()
+
+Get details about a specific Worker script.
+
+```python
+get_worker(script_name: str) -> Optional[Dict]
+```
+
+**Parameters:**
+- `script_name` (str): Name of the worker script
+
+**Returns:** Worker details dict or None
+
+**Example:**
+
+```python
+worker = cf.get_worker("my-worker")
+if worker:
+    print(f"Script ID: {worker['id']}")
+    print(f"Created: {worker['created_on']}")
+```
+
+---
+
+#### delete_worker()
+
+Delete a Worker script.
+
+```python
+delete_worker(script_name: str) -> bool
+```
+
+**Parameters:**
+- `script_name` (str): Name of the worker script
+
+**Returns:** True if successful, False otherwise
+
+**Example:**
+
+```python
+if cf.delete_worker("old-worker"):
+    print("Worker deleted successfully")
+```
+
+---
+
 #### add_worker_domain()
 
 Add a custom domain to a worker.
