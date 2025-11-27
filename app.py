@@ -156,7 +156,7 @@ def create_worker_route(email, token, zone_id, pattern, script_name):
 
 
 # Create Gradio interface
-with gr.Blocks(title="Cloudflare Manager", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(title="Cloudflare Manager") as demo:
     gr.Markdown("""
     # 🚀 Cloudflare Multi-Account Manager
     
