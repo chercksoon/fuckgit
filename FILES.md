@@ -182,7 +182,24 @@ Total: 6/6 tests passed
 
 ---
 
-### 11. PROJECT_SUMMARY.md (9.2KB)
+### 11. UPLOAD_FILES_GUIDE.md (12KB)
+**文件上传详细指南**
+
+内容：
+- Pages 文件部署详解
+- Worker 脚本上传方法
+- multipart/form-data 格式说明
+- 完整示例代码
+- KV/R2 等资源绑定
+- 批量上传示例
+- 常见问题解答
+- 技术细节
+
+适合：需要上传文件到 Pages 或 Worker 的用户
+
+---
+
+### 12. PROJECT_SUMMARY.md (9.2KB)
 **项目总结文档**
 
 内容：
@@ -201,7 +218,7 @@ Total: 6/6 tests passed
 
 ## 配置文件 (Configuration)
 
-### 12. requirements.txt (17B)
+### 13. requirements.txt (17B)
 **Python 依赖清单**
 
 内容：
@@ -216,7 +233,7 @@ pip install -r requirements.txt
 
 ---
 
-### 13. .gitignore (393B)
+### 14. .gitignore (393B)
 **Git 忽略文件配置**
 
 包含：
@@ -229,9 +246,9 @@ pip install -r requirements.txt
 
 ---
 
-## 测试文件 (Test Files)
+## 测试和示例文件 (Test & Example Files)
 
-### 14. index.html (749B)
+### 15. index.html (749B)
 **测试用的静态 HTML 文件**
 
 用途：
@@ -251,15 +268,55 @@ pip install -r requirements.txt
 
 ---
 
+### 16. example_worker.js (1.7KB)
+**示例 Worker 脚本**
+
+用途：
+- 演示 Worker 上传功能
+- 提供完整的 Worker 代码示例
+- 展示多种 API 路由
+
+功能：
+- `/` - 欢迎页面
+- `/api/time` - 返回当前时间
+- `/api/headers` - 显示请求头
+- `/api/echo` - 回显 POST 数据
+
+运行：
+```python
+cf.upload_worker("example-worker", "example_worker.js")
+```
+
+---
+
+### 17. test_worker_upload.py (1.2KB)
+**Worker 上传功能测试**
+
+测试内容：
+- 检查 upload_worker 方法
+- 检查 list_workers 方法
+- 检查 get_worker 方法
+- 检查 delete_worker 方法
+- 验证示例文件存在
+- 验证文档存在
+
+运行：
+```bash
+python3 test_worker_upload.py
+```
+
+---
+
 ## 文件大小统计
 
 | 文件类型 | 数量 | 总大小 |
 |---------|-----|--------|
-| Python 脚本 | 5 | ~43KB |
-| 文档 (Markdown) | 6 | ~58KB |
+| Python 脚本 | 6 | ~45KB |
+| 文档 (Markdown) | 7 | ~70KB |
 | 配置文件 | 2 | <1KB |
 | HTML 文件 | 1 | <1KB |
-| **总计** | **14** | **~102KB** |
+| JavaScript 文件 | 1 | ~2KB |
+| **总计** | **17** | **~118KB** |
 
 ---
 
@@ -269,13 +326,15 @@ pip install -r requirements.txt
 1. **GET_STARTED.md** - 快速上手
 2. **README.md** - 了解功能
 3. 运行 `python3 quickstart.py` - 实际操作
-4. **USAGE_GUIDE.md** - 深入学习
+4. **UPLOAD_FILES_GUIDE.md** - 学习上传文件
+5. **USAGE_GUIDE.md** - 深入学习
 
 ### 对于开发者：
 1. **API_REFERENCE.md** - 查阅 API
-2. **cloudflare_manager.py** - 阅读源码
-3. **example_usage.py** - 查看示例
-4. **USAGE_GUIDE.md** - 了解高级用法
+2. **UPLOAD_FILES_GUIDE.md** - 文件上传详解
+3. **cloudflare_manager.py** - 阅读源码
+4. **example_usage.py** - 查看示例
+5. **USAGE_GUIDE.md** - 了解高级用法
 
 ### 对于项目了解：
 1. **PROJECT_SUMMARY.md** - 项目概况
@@ -289,6 +348,7 @@ pip install -r requirements.txt
 ```bash
 # 测试
 python3 test_manager.py
+python3 test_worker_upload.py
 
 # 演示
 python3 demo.py
@@ -366,9 +426,15 @@ Total: 6/6 tests passed
 |-----|------|------|
 | 2024-01-27 | 所有文件 | 初始创建 |
 | 2024-01-27 | FILES.md | 添加文件说明文档 |
+| 2024-11-27 | cloudflare_manager.py | 添加 Worker 上传功能 |
+| 2024-11-27 | UPLOAD_FILES_GUIDE.md | 创建文件上传指南 |
+| 2024-11-27 | example_worker.js | 添加示例 Worker 脚本 |
+| 2024-11-27 | test_worker_upload.py | 添加 Worker 上传测试 |
+| 2024-11-27 | API_REFERENCE.md | 更新 Worker API 文档 |
+| 2024-11-27 | example_usage.py | 添加 Worker 上传示例 |
 
 ---
 
-**文档版本**: 1.0.0  
-**最后更新**: 2024-01-27  
+**文档版本**: 1.1.0  
+**最后更新**: 2024-11-27  
 **项目状态**: ✅ 完成

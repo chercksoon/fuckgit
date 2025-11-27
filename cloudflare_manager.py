@@ -333,6 +333,88 @@ class CloudflareManager:
         response = self.session.get(url)
         data = self._handle_response(response)
         return data.get("result", [])
+    
+    # ==================== Worker Script Operations ====================
+    
+    def upload_worker(self, script_name: str, worker_file: str, 
+                     bindings: Optional[List[Dict]] = None) -> Optional[Dict]:
+        """Upload a Worker script to Cloudflare
+        
+        Args:
+            script_name: Name of the worker script
+            worker_file: Path to the worker .js file
+            bindings: Optional list of bindings (KV, R2, etc.)
+        
+        Returns:
+            Worker script details if successful
+        """
+        url = f"{self.BASE_URL}/accounts/{self.account.account_id}/workers/scripts/{script_name}"
+        
+        # Read worker file
+        worker_path = Path(worker_file)
+        if not worker_path.exists():
+            print(f"✗ Worker file not found: {worker_file}")
+            return None
+        
+        with open(worker_path, 'r', encoding='utf-8') as f:
+            worker_content = f.read()
+        
+        # Prepare metadata
+        metadata = {
+            "main_module": "_worker.js",
+            "compatibility_date": "2023-01-01"
+        }
+        
+        if bindings:
+            metadata["bindings"] = bindings
+        
+        # Prepare multipart form data
+        files = {
+            'metadata': (None, json.dumps(metadata), 'application/json'),
+            '_worker.js': ('_worker.js', worker_content, 'text/javascript'),
+        }
+        
+        # Remove Content-Type header for multipart request
+        headers = {}
+        if self.account.use_api_key:
+            headers["X-Auth-Email"] = self.account.email
+            headers["X-Auth-Key"] = self.account.token
+        else:
+            headers["Authorization"] = f"Bearer {self.account.token}"
+        
+        response = requests.put(url, headers=headers, files=files)
+        data = self._handle_response(response)
+        
+        if data and data.get("result"):
+            print(f"✓ Worker uploaded: {script_name}")
+            print(f"  URL: https://{script_name}.{self.account.name}.workers.dev")
+            return data["result"]
+        return None
+    
+    def list_workers(self) -> List[Dict]:
+        """List all Worker scripts"""
+        url = f"{self.BASE_URL}/accounts/{self.account.account_id}/workers/scripts"
+        response = self.session.get(url)
+        data = self._handle_response(response)
+        return data.get("result", [])
+    
+    def get_worker(self, script_name: str) -> Optional[Dict]:
+        """Get a specific Worker script details"""
+        url = f"{self.BASE_URL}/accounts/{self.account.account_id}/workers/scripts/{script_name}"
+        response = self.session.get(url)
+        data = self._handle_response(response)
+        return data.get("result")
+    
+    def delete_worker(self, script_name: str) -> bool:
+        """Delete a Worker script"""
+        url = f"{self.BASE_URL}/accounts/{self.account.account_id}/workers/scripts/{script_name}"
+        response = self.session.delete(url)
+        data = self._handle_response(response)
+        
+        if data:
+            print(f"✓ Worker deleted: {script_name}")
+            return True
+        return False
 
 
 class MultiAccountManager:
@@ -404,13 +486,15 @@ def main():
         print("6. Create Zone and Get Nameservers")
         print("7. Get Nameservers for Existing Domain")
         print("8. List Zones")
-        print("9. Create Worker Route")
-        print("10. List Worker Routes")
-        print("11. Add Worker Custom Domain")
+        print("9. Upload Worker Script")
+        print("10. List Workers")
+        print("11. Create Worker Route")
+        print("12. List Worker Routes")
+        print("13. Add Worker Custom Domain")
         print("0. Exit")
         print("="*60)
         
-        choice = input("\nSelect operation (0-11): ").strip()
+        choice = input("\nSelect operation (0-13): ").strip()
         
         if choice == "0":
             print("\n👋 Goodbye!")
@@ -490,12 +574,28 @@ def main():
                 print("  No zones found")
         
         elif choice == "9":
+            script_name = input("Enter worker script name: ").strip()
+            worker_file = input("Enter path to worker .js file: ").strip()
+            cf_manager.upload_worker(script_name, worker_file)
+        
+        elif choice == "10":
+            print("\n📋 Listing Workers...")
+            workers = cf_manager.list_workers()
+            if workers:
+                for worker in workers:
+                    print(f"  - {worker.get('id')} (created: {worker.get('created_on', 'N/A')})")
+                    if worker.get('modified_on'):
+                        print(f"    Modified: {worker.get('modified_on')}")
+            else:
+                print("  No workers found")
+        
+        elif choice == "11":
             zone_id = input("Enter zone ID: ").strip()
             pattern = input("Enter route pattern (e.g., example.com/*): ").strip()
             script_name = input("Enter worker script name: ").strip()
             cf_manager.create_worker_route(zone_id, pattern, script_name)
         
-        elif choice == "10":
+        elif choice == "12":
             zone_id = input("Enter zone ID: ").strip()
             routes = cf_manager.list_worker_routes(zone_id)
             if routes:
@@ -506,7 +606,7 @@ def main():
             else:
                 print("  No routes found")
         
-        elif choice == "11":
+        elif choice == "13":
             hostname = input("Enter hostname (e.g., api.example.com): ").strip()
             service = input("Enter worker/service name: ").strip()
             zone_id = input("Enter zone ID: ").strip()

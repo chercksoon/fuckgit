@@ -101,10 +101,38 @@ def example_domain_and_nameservers(cf, project_name=None):
     return None
 
 
+def example_worker_upload(cf):
+    """Example: Upload a Worker script"""
+    print("\n" + "="*60)
+    print("Example 3: Upload Worker Script")
+    print("="*60)
+    
+    configure = input("\n📝 Do you want to upload a worker? (y/n): ").strip().lower()
+    
+    if configure != 'y':
+        print("⚠️  Skipping worker upload")
+        return None
+    
+    # Upload example worker
+    print("\n📤 Uploading example worker...")
+    result = cf.upload_worker(
+        script_name="example-worker",
+        worker_file="example_worker.js"
+    )
+    
+    if result:
+        print(f"✓ Worker uploaded successfully!")
+        print(f"  Worker ID: {result.get('id')}")
+        return "example-worker"
+    else:
+        print("✗ Failed to upload worker")
+        return None
+
+
 def example_worker_routes(cf, zone_id=None):
     """Example: Configure worker routes"""
     print("\n" + "="*60)
-    print("Example 3: Worker Routes Configuration (Optional)")
+    print("Example 4: Worker Routes Configuration (Optional)")
     print("="*60)
     
     if not zone_id:
@@ -144,7 +172,7 @@ def example_worker_routes(cf, zone_id=None):
 def example_list_zones(cf):
     """Example: List all zones"""
     print("\n" + "="*60)
-    print("Example 4: List All Zones")
+    print("Example 5: List All Zones")
     print("="*60)
     
     zones = cf.list_zones()
@@ -176,8 +204,9 @@ def main():
     print("This script demonstrates the key features:")
     print("  1. Deploy Pages project")
     print("  2. Bind domain and get nameservers")
-    print("  3. Configure worker routes (optional)")
-    print("  4. List all zones")
+    print("  3. Upload Worker script")
+    print("  4. Configure worker routes (optional)")
+    print("  5. List all zones")
     
     proceed = input("\nDo you want to proceed? (y/n): ").strip().lower()
     
@@ -191,10 +220,13 @@ def main():
     # Example 2: Domain and nameservers
     zone_id = example_domain_and_nameservers(cf, project_name)
     
-    # Example 3: Worker routes (optional)
+    # Example 3: Upload Worker
+    worker_name = example_worker_upload(cf)
+    
+    # Example 4: Worker routes (optional)
     example_worker_routes(cf, zone_id)
     
-    # Example 4: List zones
+    # Example 5: List zones
     example_list_zones(cf)
     
     print("\n" + "="*60)
@@ -204,6 +236,8 @@ def main():
     print("  1. Update nameservers at your domain registrar")
     print("  2. Wait for DNS propagation (5-30 minutes)")
     print("  3. Your site will be live!")
+    if worker_name:
+        print(f"  4. Your worker is accessible at: https://{worker_name}.<account>.workers.dev")
 
 
 if __name__ == "__main__":
