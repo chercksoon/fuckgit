@@ -15,19 +15,20 @@ def test_provided_credentials():
     print("Cloudflare Credentials Test")
     print("="*60)
     
-    # Provided credentials
+    # Provided credentials (API Key format)
     email = "exslym@closedbyme.com"
     token = "21f3fb278a15b732a4f52c95d5042d78d1a21"
     
     print(f"\nEmail: {email}")
-    print(f"Token: {token[:10]}...{token[-10:]}")
+    print(f"Token (API Key): {token[:10]}...{token[-10:]}")
+    print(f"Auth Method: X-Auth-Email + X-Auth-Key")
     
     print("\n" + "-"*60)
     print("Test 1: Initialize Manager")
     print("-"*60)
     
     try:
-        account = CloudflareAccount(email=email, token=token)
+        account = CloudflareAccount(email=email, token=token, use_api_key=True)
         cf = CloudflareManager(account)
         
         if cf.account.account_id:

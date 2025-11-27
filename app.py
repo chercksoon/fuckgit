@@ -12,7 +12,7 @@ from cloudflare_manager import CloudflareManager, CloudflareAccount
 def test_connection(email, token):
     """Test Cloudflare API connection"""
     try:
-        account = CloudflareAccount(email=email, token=token)
+        account = CloudflareAccount(email=email, token=token, use_api_key=True)
         cf = CloudflareManager(account)
         
         if cf.account.account_id:
@@ -26,7 +26,7 @@ def test_connection(email, token):
 def list_projects(email, token):
     """List all Pages projects"""
     try:
-        account = CloudflareAccount(email=email, token=token)
+        account = CloudflareAccount(email=email, token=token, use_api_key=True)
         cf = CloudflareManager(account)
         
         projects = cf.list_pages_projects()
@@ -48,7 +48,7 @@ def list_projects(email, token):
 def create_project(email, token, project_name, branch):
     """Create a new Pages project"""
     try:
-        account = CloudflareAccount(email=email, token=token)
+        account = CloudflareAccount(email=email, token=token, use_api_key=True)
         cf = CloudflareManager(account)
         
         project = cf.create_pages_project(project_name, branch)
@@ -64,7 +64,7 @@ def create_project(email, token, project_name, branch):
 def list_zones(email, token):
     """List all zones"""
     try:
-        account = CloudflareAccount(email=email, token=token)
+        account = CloudflareAccount(email=email, token=token, use_api_key=True)
         cf = CloudflareManager(account)
         
         zones = cf.list_zones()
@@ -93,7 +93,7 @@ def list_zones(email, token):
 def create_zone_and_get_ns(email, token, domain_name):
     """Create zone and get nameservers"""
     try:
-        account = CloudflareAccount(email=email, token=token)
+        account = CloudflareAccount(email=email, token=token, use_api_key=True)
         cf = CloudflareManager(account)
         
         zone = cf.create_zone(domain_name)
@@ -115,7 +115,7 @@ def create_zone_and_get_ns(email, token, domain_name):
 def bind_domain(email, token, project_name, domain_name):
     """Bind domain to Pages project"""
     try:
-        account = CloudflareAccount(email=email, token=token)
+        account = CloudflareAccount(email=email, token=token, use_api_key=True)
         cf = CloudflareManager(account)
         
         result_data = cf.add_pages_domain(project_name, domain_name)
@@ -142,7 +142,7 @@ def bind_domain(email, token, project_name, domain_name):
 def create_worker_route(email, token, zone_id, pattern, script_name):
     """Create worker route"""
     try:
-        account = CloudflareAccount(email=email, token=token)
+        account = CloudflareAccount(email=email, token=token, use_api_key=True)
         cf = CloudflareManager(account)
         
         route = cf.create_worker_route(zone_id, pattern, script_name)

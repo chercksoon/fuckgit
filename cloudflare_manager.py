@@ -27,6 +27,7 @@ class CloudflareAccount:
     token: str
     account_id: Optional[str] = None
     name: Optional[str] = None
+    use_api_key: bool = True  # True = API Key (X-Auth-Key), False = API Token (Bearer)
 
 
 class CloudflareManager:
@@ -37,10 +38,21 @@ class CloudflareManager:
     def __init__(self, account: CloudflareAccount):
         self.account = account
         self.session = requests.Session()
-        self.session.headers.update({
-            "Authorization": f"Bearer {account.token}",
-            "Content-Type": "application/json"
-        })
+        
+        # Support both API Key and API Token authentication
+        if account.use_api_key:
+            # API Key authentication (X-Auth-Email + X-Auth-Key)
+            self.session.headers.update({
+                "X-Auth-Email": account.email,
+                "X-Auth-Key": account.token,
+                "Content-Type": "application/json"
+            })
+        else:
+            # API Token authentication (Bearer)
+            self.session.headers.update({
+                "Authorization": f"Bearer {account.token}",
+                "Content-Type": "application/json"
+            })
         
         # Auto-fetch account_id if not provided
         if not self.account.account_id:
